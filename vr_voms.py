@@ -131,20 +131,22 @@ class vrVoms():
         yaw_vel = self.exp_df['HeadOrientation.y'].diff().to_numpy() / np.mean(np.diff(self.exp_df['TimeStamp']))
         yaw_vel = np.nan_to_num(yaw_vel, nan=0.0)
 
-        what = np.nanmean(el_vel / pitch_vel)
-        what2 = np.nanmean(az_vel / yaw_vel)
+        what = np.nanmean(self.exp_df['CyclopeanEyeDirection.az_filter'] / self.exp_df['HeadOrientation.x'])
+        what2 = np.nanmean(self.exp_df['CyclopeanEyeDirection.el_filter'] / self.exp_df['HeadOrientation.y'])
         print(what2)
         print(what)
         input()
-        # plt.plot(az_vel)
+        plt.plot(az_vel)
         # plt.plot(el_vel)
-        # plt.plot(pitch_vel)
+        plt.plot(pitch_vel)
+        plt.plot(az_vel/pitch_vel)
         # plt.plot(yaw_vel)
 
-        # plt.plot(self.exp_df['HeadOrientation.x'])
-        # plt.plot(self.exp_df['HeadOrientation.y'])
+        # plt.plot(-self.exp_df['HeadOrientation.x'])
+        # plt.plot(-self.exp_df['HeadOrientation.y'])
         # plt.plot(self.exp_df['CyclopeanEyeDirection.az_filter'])
         # plt.plot(self.exp_df['CyclopeanEyeDirection.el_filter'])
+        # plt.plot(self.exp_df['CyclopeanEyeDirection.az_filter'] / self.exp_df['HeadOrientation.x'])
         plt.show()
 
     def sp_heuristics(self):
