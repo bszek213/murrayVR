@@ -1,0 +1,13 @@
+Index(['ParticipantID', 'Experiment', 'Condition', 'TimeStamp',
+       'LocalDotPostion.x', 'LocalDotPostion.y', 'LocalDotPostion.z',
+       'WorldDotPostion.x', 'WorldDotPostion.y', 'WorldDotPostion.z',
+       'HeadPosition.x', 'HeadPosition.y', 'HeadPosition.z',
+       'HeadOrientation.x', 'HeadOrientation.y', 'HeadOrientation.z',
+       'LeftEyeOrigin.x', 'LeftEyeOrigin.y', 'LeftEyeOrigin.z',
+       'LeftEyeDirection.x', 'LeftEyeDirection.y', 'LeftEyeDirection.z',
+       'RightEyeOrigin.x', 'RightEyeOrigin.y', 'RightEyeOrigin.z',
+       'RightEyeDirection.x', 'RightEyeDirection.y', 'RightEyeDirection.z',
+       'CyclopeanEyeOrigin.x', 'CyclopeanEyeOrigin.y', 'CyclopeanEyeOrigin.z',
+       'CyclopeanEyeDirection.x', 'CyclopeanEyeDirection.y',
+       'CyclopeanEyeDirection.z'],
+      dtype='object')

@@ -1,0 +1,15 @@
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/ZM3_2022/experiment_data_pID_ZM3_2022-12-05-09-16-12.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/TC23265_2023/experiment_data_pID_TC23265_2023-07-26-10-11-42.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/SC21753_CON1_2021/experiment_data_pID_SC21753_CON1_2021-10-26-12-26-57.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/ZM11_22188LC1_3_V_2023/experiment_data_pID_ZM11_22188LC1_3_V_2023-03-29-01-53-59.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/TC22056_2022/experiment_data_pID_TC22056_2022-06-10-11-25-23.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/WB22387_2022/experiment_data_pID_WB22387_2022-08-26-11-34-21.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/ZM1_2022/experiment_data_pID_ZM1_2022-09-30-09-32-10.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/DB23536/experiment_data_pID_DB23536_2024-01-25-09-25-41.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/DB23536/experiment_data_pID_DB23536_2024-01-25-09-25-26.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/SF23084C1_1_2023/experiment_data_pID_SF23084C1_1_2023-09-06-08-11-22.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/TC21244_SF2_2022/experiment_data_pID_TC21244_SF2_2022-05-04-09-08-13.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/WB22143_2022/experiment_data_pID_WB22143_2022-06-24-11-07-08.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/SF23073_V_2023/experiment_data_pID_SF23073_V_2023-06-15-09-58-22.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/SF23073_V_2023/experiment_data_pID_SF23073_V_2023-06-15-09-57-17.csv
+/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/2023_2024/SF23073_V_2023/experiment_data_pID_SF23073_V_2023-06-15-09-57-47.csv
