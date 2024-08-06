@@ -3,8 +3,10 @@ import os
 from scipy.signal import find_peaks
 
 def az_el(df):
-    azimuth = np.arctan(df['CyclopeanEyeDirection.y'], df['CyclopeanEyeDirection.x'])
-    elevation = np.arctan(df['CyclopeanEyeDirection.z'], np.sqrt(df['CyclopeanEyeDirection.x']**2 + df['CyclopeanEyeDirection.y']**2))
+    # azimuth = np.arctan(df['CyclopeanEyeDirection.y'], df['CyclopeanEyeDirection.x'])
+    azimuth = np.arctan2(df['CyclopeanEyeDirection.x'], df['CyclopeanEyeDirection.z'])
+    # elevation = np.arctan(df['CyclopeanEyeDirection.y'], np.sqrt(df['CyclopeanEyeDirection.x']**2 + df['CyclopeanEyeDirection.z']**2))
+    elevation = np.arctan2(df['CyclopeanEyeDirection.y'], np.sqrt(df['CyclopeanEyeDirection.x']**2 + df['CyclopeanEyeDirection.z']**2))
     df['CyclopeanEyeDirection.az'] = np.degrees(azimuth)
     df['CyclopeanEyeDirection.el'] = np.degrees(elevation)
     #mean offset?

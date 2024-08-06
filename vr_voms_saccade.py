@@ -33,7 +33,8 @@ class vrVoms():
     def __init__(self,check_trials=False, check_saccade_trials=False, methods_plot=False) -> None:
         print('vrVoms Saccades Class')
         self.all_files_dict = find_files(os.path.join(os.getcwd(),'2023_2024'), "experiment_data_pID")
-        self.good_sac_trials_path = '/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/good_saccade_trials.txt'
+        self.good_sac_trials_path_src = '/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/good_saccade_trials_src.txt'
+        self.good_sac_trials_path_con = '/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/good_saccade_trials_control.txt'
         self.check_trials = check_trials
         self.check_saccade_trials = check_saccade_trials
         self.methods_plot = methods_plot
@@ -46,7 +47,15 @@ class vrVoms():
             data = pd.read_csv(file)
             if data['Experiment'].iloc[0] == "SACCADES":
                 self.exp_df = data
-                self.saccades(file)
+                # plt.figure()
+                # plt.plot(self.exp_df['CyclopeanEyeDirection.x'],label='hor')
+                # plt.plot(self.exp_df['CyclopeanEyeDirection.y'],label='vert')
+                # plt.plot(self.exp_df['CyclopeanEyeDirection.z'],label='z')
+                # plt.legend()
+                # plt.show()
+                # plt.close()
+                all_saccades = self.saccades(file)
+                return all_saccades
 
     def saccades(self,file):
         self.exp_df = az_el(self.exp_df)
@@ -56,7 +65,16 @@ class vrVoms():
             self.exp_df['CyclopeanEyeDirection.el_filter'] = savgol_filter(self.exp_df['CyclopeanEyeDirection.el'],
                                                                 window_length=45,polyorder=2)
         az_periods = detect_square_wave_periods(self.exp_df,'CyclopeanEyeDirection.az')
-        saccades_dict = self.saccade_heurstics()
+        saccades_dict, saccade_dir = self.saccade_heurstics()
+        print('=================')
+        print(saccade_dir)
+        print('=================')
+        # plt.figure()
+        # plt.plot(self.exp_df['CyclopeanEyeDirection.az'],label='hor')
+        # plt.plot(self.exp_df['CyclopeanEyeDirection.el'],label='vert')
+        # plt.legend()
+        # plt.show()
+        # plt.close()
         all_saccades = {}
         sacc_velocity_az, sacc_duration, sacc_velocity_el = [], [], []
         for keys, items in saccades_dict.items():
@@ -134,9 +152,11 @@ class vrVoms():
         if np.var(self.exp_df['CyclopeanEyeDirection.az_filter']) > np.var(self.exp_df['CyclopeanEyeDirection.el_filter']):
             saccade_time_series = self.exp_df['CyclopeanEyeDirection.az_filter']
             sacc_vel = az_vel
+            saccade_dir = 'horizontal'
         else:
             saccade_time_series = self.exp_df['CyclopeanEyeDirection.el_filter']
             sacc_vel = el_vel
+            saccade_dir = 'vertical'
         for i in range(len(saccade_time_series)):
             if sacc_vel[i] > 90 and saccade_found == False: #velocity threshold for saccade
                 saccade_start = self.exp_df['TimeStamp'].iloc[i]
@@ -181,7 +201,7 @@ class vrVoms():
             # Save animation as a GIF
             ani.save('saccade_animation.gif', writer='pillow', fps=1)
         
-        return saccades_dict
+        return saccades_dict, saccade_dir
     
     def run_analysis(self):
         if self.check_trials:
@@ -199,23 +219,42 @@ class vrVoms():
             #control
             for dir in tqdm(self.control):
                 files = find_files(dir, "experiment_data_pID")
-                 for file_paths in files.values():
+                for file_paths in files.values():
                     for file in file_paths:
                         try:
                             self.parse_condition_per(file)
                         except Exception as e:
                             print(f'{Fore.RED}file is not included in analysis: {e}{Style.RESET_ALL}')
+            print(f'{Fore.CYAN} TRIALS ARE VETTED. Use this command python3 vr_voms_saccade.py {Style.RESET_ALL}')
+            exit()
 
         #iterate over good saccades
-        with open(self.good_sac_trials_path, 'r') as f:
-            files = f.readlines()
-
-        for file in files:
+        with open(self.good_sac_trials_path_src, 'r') as f:
+            files_src= f.readlines()
+        
+        with open(self.good_sac_trials_path_con, 'r') as f:
+            files_control = f.readlines()
+        
+        saccades_dict_src = []
+        for file in files_src:
             file = file.strip()  #remove any leading/trailing whitespace
             if os.path.isfile(file):  #check if the file exists
-                self.parse_condition_per(file)
+                all_saccades = self.parse_condition_per(file)
+                saccades_dict_src.append(all_saccades)
             else:
                 print(f'{Fore.RED} File not found: {file}{Style.RESET_ALL}')
+        pd.DataFrame(saccades_dict_src).dropna().to_csv('src_saccades.csv',index=False)
+
+        saccades_dict_con = []
+        for file in files_control:
+            file = file.strip()  #remove any leading/trailing whitespace
+            if os.path.isfile(file):  #check if the file exists
+                all_saccades = self.parse_condition_per(file)
+                saccades_dict_con.append(all_saccades)
+            else:
+                print(f'{Fore.RED} File not found: {file}{Style.RESET_ALL}')
+        pd.DataFrame(saccades_dict_con).dropna().to_csv('con_saccades.csv',index=False)
+        
 
 def main():
     parser = argparse.ArgumentParser(description='Process Saccades from VOMS.')
