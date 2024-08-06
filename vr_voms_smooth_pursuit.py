@@ -29,12 +29,17 @@ plt.rcParams.update({
     'lines.linewidth': 2
 })
 
+"""
+-if I scale the elevation by /2, then the dot and eye match up very well.
+I do not need to tocuh the azimuth
+"""
+
 class vrVoms():
     def __init__(self,check_trials=False, methods_plot=False) -> None:
         print('vrVoms Smooth Pursuit Class')
         self.all_files_dict = find_files(os.path.join(os.getcwd(),'2023_2024'), "experiment_data_pID")
-        self.good_sp_trials_path_src = '/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/good_saccade_trials_src.txt'
-        self.good_sp_trials_path_con = '/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/good_saccade_trials_control.txt'
+        self.good_sp_trials_path_src = '/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/good_sp_trials_src.txt'
+        self.good_sp_trials_path_con = '/home/brianszekely/Desktop/ProjectsResearch/murray_lab/vr_eye/good_sp_trials_control.txt'
         self.check_trials = check_trials
         self.methods_plot = methods_plot
         self.src, self.control = extract_con_and_control()
@@ -63,6 +68,7 @@ class vrVoms():
                                                                     window_length=23,polyorder=2)
             self.exp_df['CyclopeanEyeDirection.el_filter'] = savgol_filter(self.exp_df['CyclopeanEyeDirection.el'],
                                                                 window_length=23,polyorder=2)
+        self.exp_df['CyclopeanEyeDirection.el_filter'] = self.exp_df['CyclopeanEyeDirection.el_filter'] * 0.5
         self.sp_heuristics()
         if self.check_trials:
             fig, ax1 = plt.subplots(figsize=(15, 8),nrows=1,ncols=1)
@@ -95,10 +101,16 @@ class vrVoms():
 
             def on_key(event):
                 if event.key == 'y':
-                    check_and_append(file, "good_smooth_pursuit_trials.txt")
+                    if 'CON1' in file or 'C1' in file:
+                        check_and_append(file, "good_sp_trials_src.txt")
+                    elif not any(substring in file for substring in ['CON', 'PC', 'C1', 'SF']):
+                        check_and_append(file, "good_sp_trials_control.txt")
                     plt.close(fig)
                 elif event.key == 'n':
-                    check_and_append(file, "bad_smooth_pursuit_trials.txt")
+                    if 'CON1' in file or 'C1' in file:
+                        check_and_append(file, "bad_sp_trials_src.txt")
+                    elif not any(substring in file for substring in ['CON', 'PC', 'C1', 'SF']):
+                        check_and_append(file, "bad_sp_trials_control.txt")
                     plt.close(fig)
                 else:
                     print("Invalid response. Please press 'y' or 'n'.")
