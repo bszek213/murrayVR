@@ -61,9 +61,9 @@ class vrVoms():
         self.exp_df = az_el(self.exp_df)
         if 'CyclopeanEyeDirection.az_filter' not in self.exp_df.columns:
             self.exp_df['CyclopeanEyeDirection.az_filter'] = savgol_filter(self.exp_df['CyclopeanEyeDirection.az'],
-                                                                    window_length=45,polyorder=2)
+                                                                    window_length=23,polyorder=2)
             self.exp_df['CyclopeanEyeDirection.el_filter'] = savgol_filter(self.exp_df['CyclopeanEyeDirection.el'],
-                                                                window_length=45,polyorder=2)
+                                                                window_length=23,polyorder=2)
         az_periods = detect_square_wave_periods(self.exp_df,'CyclopeanEyeDirection.az')
         saccades_dict, saccade_dir = self.saccade_heurstics()
         print('=================')
@@ -76,20 +76,38 @@ class vrVoms():
         # plt.show()
         # plt.close()
         all_saccades = {}
-        sacc_velocity_az, sacc_duration, sacc_velocity_el = [], [], []
+        sacc_velocity_az, sacc_duration, sacc_velocity_el, sacc_amp_az, sacc_amp_el = [], [], [], [], []
         for keys, items in saccades_dict.items():
             filtered_df = self.exp_df[(self.exp_df['TimeStamp'] >= items[0]) & (self.exp_df['TimeStamp'] <= items[1])]
+
+            saccade_vel_check_az = np.nanmean(filtered_df['CyclopeanEyeDirection.az_filter'].diff().abs()
+                                                     / filtered_df["TimeStamp"].diff())
+            saccade_vel_check_el = np.nanmean(filtered_df['CyclopeanEyeDirection.el_filter'].diff().abs()
+                                                     / filtered_df["TimeStamp"].diff())
+            # if saccade_vel_check_az >= 90 or saccade_vel_check_el >= 90:
             sacc_duration.append((items[1] - items[0]) * 1000)
-            sacc_velocity_az.append(np.nanmean(filtered_df['CyclopeanEyeDirection.az_filter'].diff().abs()
-                                                     / filtered_df["TimeStamp"].diff()))
-            sacc_velocity_el.append(np.nanmean(filtered_df['CyclopeanEyeDirection.el_filter'].diff().abs()
-                                                     / filtered_df["TimeStamp"].diff()))
+            if saccade_dir == "horizontal":
+                sacc_velocity_az.append(saccade_vel_check_az)
+                sacc_velocity_el.append(np.nan)
+                sacc_amp_az.append((np.abs(filtered_df['CyclopeanEyeDirection.az_filter'].iloc[-1] - 
+                                filtered_df['CyclopeanEyeDirection.az_filter'].iloc[0])) / 2) #divide by two to get the middle point as the start
+                sacc_amp_el.append(np.nan)
+            elif saccade_dir == "vertical":
+                sacc_velocity_az.append(np.nan)
+                sacc_velocity_el.append(saccade_vel_check_el)
+                sacc_amp_az.append(np.nan)
+                sacc_amp_el.append((np.abs(filtered_df['CyclopeanEyeDirection.az_filter'].iloc[-1] - 
+                                filtered_df['CyclopeanEyeDirection.az_filter'].iloc[0])) / 2)
+        
         all_saccades['num_saccades'] = len(saccades_dict)
         all_saccades['sacc_duration'] = np.mean(sacc_duration)
         all_saccades['sacc_velocity_az'] = np.mean([x for x in sacc_velocity_az if np.isfinite(x)])
         all_saccades['sacc_velocity_el'] = np.mean([x for x in sacc_velocity_el if np.isfinite(x)])
-        all_saccades['experiment'] = self.exp_df['Experiment'].iloc[0]
+        # all_saccades['experiment'] = self.exp_df['Experiment'].iloc[0]
         all_saccades['ID'] = self.exp_df['ParticipantID'].iloc[0]
+        all_saccades['direction'] = saccade_dir
+        all_saccades['saccade_amp_az'] = np.mean(sacc_amp_az)
+        all_saccades['saccade_amp_el'] = np.mean(sacc_amp_el)
 
         if self.check_trials:
             fig, ax1 = plt.subplots(figsize=(15, 8),nrows=1,ncols=1)
@@ -149,6 +167,12 @@ class vrVoms():
         saccade_number = 1
 
         #check to see if this is horizonal or vertical saccade task
+        # plt.figure()
+        # plt.plot(self.exp_df['CyclopeanEyeDirection.az_filter'],label='az')
+        # plt.plot(self.exp_df['CyclopeanEyeDirection.el_filter'],label='el')
+        # plt.title(f"var az {np.var(self.exp_df['CyclopeanEyeDirection.az_filter'])} || var el {np.var(self.exp_df['CyclopeanEyeDirection.el_filter'])}")
+        # plt.legend() 
+        # plt.show()
         if np.var(self.exp_df['CyclopeanEyeDirection.az_filter']) > np.var(self.exp_df['CyclopeanEyeDirection.el_filter']):
             saccade_time_series = self.exp_df['CyclopeanEyeDirection.az_filter']
             sacc_vel = az_vel
@@ -243,7 +267,7 @@ class vrVoms():
                 saccades_dict_src.append(all_saccades)
             else:
                 print(f'{Fore.RED} File not found: {file}{Style.RESET_ALL}')
-        pd.DataFrame(saccades_dict_src).dropna().to_csv('src_saccades.csv',index=False)
+        pd.DataFrame(saccades_dict_src).to_csv('src_saccades.csv',index=False)
 
         saccades_dict_con = []
         for file in files_control:
@@ -253,7 +277,7 @@ class vrVoms():
                 saccades_dict_con.append(all_saccades)
             else:
                 print(f'{Fore.RED} File not found: {file}{Style.RESET_ALL}')
-        pd.DataFrame(saccades_dict_con).dropna().to_csv('con_saccades.csv',index=False)
+        pd.DataFrame(saccades_dict_con).to_csv('con_saccades.csv',index=False)
         
 
 def main():

@@ -2,12 +2,15 @@ import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import stats
+from numpy import ceil
 
 def main():
     #saccades
     df_saccade_con = pd.read_csv('con_saccades.csv')
     df_saccade_src = pd.read_csv('src_saccades.csv')
-    columns_to_plot = ['num_saccades', 'sacc_duration', 'sacc_velocity_az', 'sacc_velocity_el']
+    columns_to_plot = ['num_saccades', 'sacc_duration', 
+                       'sacc_velocity_az', 'sacc_velocity_el',
+                       'saccade_amp_az', 'saccade_amp_el']
 
     #equivalent sampling between each group
     min_samples = min(len(df_saccade_con), len(df_saccade_src))
@@ -17,21 +20,29 @@ def main():
     sns.set_style("whitegrid")
     sns.set_palette("deep")
 
-    fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+    num_plots = len(columns_to_plot) #total number of plots
+    num_cols = 2  #num cols in each grid
+    num_rows = int(ceil(num_plots / num_cols))  #num rows in each grid
+
+    fig, axes = plt.subplots(num_rows, num_cols, figsize=(16, 6 * num_rows))
     axes = axes.flatten()
 
     for i, column in enumerate(columns_to_plot):
         #test normality
-        stat_src, p_value_src = stats.shapiro(df_saccade_src[column])
-        stat_con, p_value_con = stats.shapiro(df_saccade_con[column])
+        stat_src, p_value_src = stats.shapiro(df_saccade_src[column].dropna())
+        stat_con, p_value_con = stats.shapiro(df_saccade_con[column].dropna())
 
         if p_value_src > 0.05 and p_value_con > 0.05:
             #both normally distributed, use t-test
-            stat, p_value = stats.ttest_ind(df_saccade_src[column], df_saccade_con[column])
+            stat, p_value = stats.ttest_ind(df_saccade_src[column], df_saccade_con[column], nan_policy='omit')
             test_name = "t-test"
         else:
             #least one sample not normally distributed, use Mannu test
-            stat, p_value = stats.mannwhitneyu(df_saccade_src[column], df_saccade_con[column])
+            stat, p_value = stats.mannwhitneyu(
+                df_saccade_src[column].dropna(), 
+                df_saccade_con[column].dropna(), 
+                alternative='two-sided'
+            )
             test_name = "Mann-Whitney U"
 
         sns.histplot(data=df_saccade_src, x=column, kde=True, 
