@@ -5,7 +5,7 @@ from scipy import stats
 from numpy import ceil
 
 def main():
-    #saccades
+    #SACCADES
     df_saccade_con = pd.read_csv('con_saccades.csv')
     df_saccade_src = pd.read_csv('src_saccades.csv')
     columns_to_plot = ['num_saccades', 'sacc_duration', 
@@ -60,5 +60,7 @@ def main():
     plt.tight_layout()
     plt.savefig('voms_saccades_src_vs_con.png',dpi=400)
     plt.close()
+
+    #SMOOTH PURSUIT
 if __name__ == "__main__":
     main()

@@ -14,14 +14,24 @@ def az_el(df):
     df['CyclopeanEyeDirection.el'] = df['CyclopeanEyeDirection.el'] - df['CyclopeanEyeDirection.el'].mean()
     return df
 
-def az_el_dot(df):
-    azimuth = np.arctan(df['WorldDotPostion.y'], df['WorldDotPostion.x'])
-    elevation = np.arctan(df['WorldDotPostion.z'], np.sqrt(df['WorldDotPostion.x']**2 + df['WorldDotPostion.y']**2))
+def az_el_dot_world(df):
+    azimuth = np.arctan(df['WorldDotPostion.x'], df['WorldDotPostion.z'])
+    elevation = np.arctan(df['WorldDotPostion.y'], np.sqrt(df['WorldDotPostion.x']**2 + df['WorldDotPostion.z']**2))
     df['WorldDotPostion.az'] = np.degrees(azimuth)
     df['WorldDotPostion.el'] = np.degrees(elevation)
     #mean offset?
     df['WorldDotPostion.az'] = df['WorldDotPostion.az'] - df['WorldDotPostion.az'].mean()
     df['WorldDotPostion.el'] = df['WorldDotPostion.el'] - df['WorldDotPostion.el'].mean()
+    return df
+
+def az_el_dot_local(df):
+    azimuth = np.arctan2(df['LocalDotPostion.x'], df['LocalDotPostion.z'])
+    elevation = np.arctan2(df['LocalDotPostion.y'], np.sqrt(df['LocalDotPostion.x']**2 + df['LocalDotPostion.z']**2))
+    df['LocalDotPostion.az'] = np.degrees(azimuth)
+    df['LocalDotPostion.el'] = np.degrees(elevation)
+    #mean offset?
+    df['LocalDotPostion.az'] = df['LocalDotPostion.az'] - df['LocalDotPostion.az'].mean()
+    df['LocalDotPostion.el'] = df['LocalDotPostion.el'] - df['LocalDotPostion.el'].mean()
     return df
 
 def find_files(root_dir, substring):
