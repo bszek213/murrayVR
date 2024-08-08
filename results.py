@@ -69,8 +69,8 @@ def main():
 
     #equal samplesbetween groups
     min_samples = min(len(df_con_sp), len(df_src_sp))
-    # df_con_sp = df_con_sp.sample(n=min_samples, random_state=42)
-    # df_src_sp = df_src_sp.sample(n=min_samples, random_state=42)
+    df_con_sp = df_con_sp.sample(n=min_samples, random_state=42)
+    df_src_sp = df_src_sp.sample(n=min_samples, random_state=42)
 
     sns.set_style("whitegrid")
     sns.set_palette("deep")
@@ -80,7 +80,7 @@ def main():
     num_rows = int(ceil(num_plots / num_cols))  #num rows
 
     fig, axes = plt.subplots(num_rows, num_cols, figsize=(16, 6 * num_rows))
-    fig.suptitle('Threshold for good trial is mean_gain >= 0.5 and mean_gain <= 1.5')
+    fig.suptitle('Threshold for good trial is mean_gain >= 0.5 and mean_gain <= 1.1')
     axes = axes.flatten()
 
     for i, column in enumerate(columns_to_plot):

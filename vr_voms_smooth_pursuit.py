@@ -196,12 +196,12 @@ class vrVoms():
         variability = std_dev / mean_gain
         rms_error = rmse(sp_vel_dot,norm_eye)
 
-        #here is my range that I am making up: 0.6 and 1.2. based on a moderate range of 
+        #here is my range that I am making up: 0.5 and 1.1. based on a moderate range of 
         #possibilites, as normative gain is usually between 0.8 - 1.0
         print('======================')
         print(mean_gain)
         print('======================')
-        if mean_gain >= 0.5 and mean_gain <= 1.5:
+        if mean_gain >= 0.5 and mean_gain <= 1.01:
             #Save data if condition met
             sp_dict['ID'] = self.exp_df['ParticipantID'].iloc[0]
             sp_dict['gain'] = mean_gain
